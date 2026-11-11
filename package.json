@@ -1,0 +1,94 @@
+{
+  "name": "macdm",
+  "productName": "MacDM",
+  "version": "1.0.0",
+  "description": "Download manager ala IDM untuk macOS dan Windows: multi-segment, pause/resume, antrian, kategori, integrasi browser.",
+  "main": "src/main.js",
+  "author": "Endang",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "test": "node test/engine.test.js",
+    "dist": "electron-builder --mac --arm64 --publish never",
+    "dist:mac": "electron-builder --mac --arm64 --publish never",
+    "dist:win": "electron-builder --win nsis:x64 portable:x64 --publish never",
+    "dist:win-arm64": "electron-builder --win nsis:arm64 --publish never"
+  },
+  "devDependencies": {
+    "@electron/fuses": "^1.8.0",
+    "electron": "^33.2.0",
+    "electron-builder": "^25.1.8",
+    "resedit": "^3.1.0"
+  },
+  "build": {
+    "appId": "id.cipdev.macdm",
+    "productName": "MacDM",
+    "files": [
+      "src/**/*",
+      "package.json"
+    ],
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "mac": {
+      "category": "public.app-category.utilities",
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "arm64"
+          ]
+        },
+        {
+          "target": "zip",
+          "arch": [
+            "arm64"
+          ]
+        }
+      ],
+      "icon": "build/icon.png",
+      "identity": "-",
+      "hardenedRuntime": false
+    },
+    "dmg": {
+      "title": "MacDM"
+    },
+    "afterPack": "build/afterPack.js",
+    "publish": null,
+    "copyright": "Copyright \u00a9 2026 Endang",
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "build/icon.ico",
+      "artifactName": "${productName}-${version}-${arch}-setup.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "MacDM",
+      "installerIcon": "build/icon.ico",
+      "uninstallerIcon": "build/icon.ico",
+      "deleteAppDataOnUninstall": false
+    },
+    "portable": {
+      "artifactName": "${productName}-${version}-portable.${ext}"
+    }
+  }
+}

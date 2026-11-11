@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:" />
+  <title>MacDM</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="drag-strip"></div>
+      <div class="brand">
+        <div class="logo" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0-5-5m5 5 5-5M4 19h16" /></svg>
+        </div>
+        <div>
+          <div class="brand-name">MacDM</div>
+          <div class="brand-sub">Download Manager</div>
+        </div>
+      </div>
+      <nav id="nav" class="nav"></nav>
+      <div class="sidebar-foot">
+        <div class="total-speed"><span class="dot"></span><span id="totalSpeed">0 B/s</span></div>
+        <div class="bridge-hint" id="bridgeHint">Ekstensi browser: port 6801</div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="toolbar">
+        <button class="tb primary" data-action="add" title="Tambah URL ({MOD}N)">
+          <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" /></svg><span>Tambah URL</span>
+        </button>
+        <div class="tb-sep"></div>
+        <button class="tb" data-action="resume" title="Resume (Spasi)">
+          <svg viewBox="0 0 24 24"><path d="M7 4.5v15l12-7.5z" /></svg><span>Resume</span>
+        </button>
+        <button class="tb" data-action="pause" title="Pause (Spasi)">
+          <svg viewBox="0 0 24 24"><path d="M8 5v14M16 5v14" /></svg><span>Pause</span>
+        </button>
+        <button class="tb" data-action="remove" title="Hapus ({DEL})">
+          <svg viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3" /></svg><span>Hapus</span>
+        </button>
+        <div class="tb-sep"></div>
+        <button class="tb" data-action="startQueue" title="Mulai antrian ({MOD}R)">
+          <svg viewBox="0 0 24 24"><path d="M4 6h10M4 12h10M4 18h6M16 14v6l5-3z" /></svg><span>Mulai Antrian</span>
+        </button>
+        <button class="tb" data-action="stopQueue" title="Hentikan semua ({MOD}.)">
+          <svg viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2" /></svg><span>Hentikan Semua</span>
+        </button>
+        <div class="spacer"></div>
+        <label class="search">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6" /><path d="m20 20-4.5-4.5" /></svg>
+          <input id="search" type="search" placeholder="Cari file…" />
+        </label>
+        <button class="tb icon-only" data-action="settings" title="Pengaturan">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z" /></svg>
+        </button>
+      </header>
+
+      <section class="list-wrap">
+        <table class="list">
+          <thead>
+            <tr>
+              <th class="c-name">Nama File</th>
+              <th class="c-size">Ukuran</th>
+              <th class="c-progress">Progres</th>
+              <th class="c-status">Status</th>
+              <th class="c-speed">Kecepatan</th>
+              <th class="c-eta">Sisa Waktu</th>
+              <th class="c-date">Ditambahkan</th>
+            </tr>
+          </thead>
+          <tbody id="rows"></tbody>
+        </table>
+        <div id="empty" class="empty hidden">
+          <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0-5-5m5 5 5-5M4 19h16" /></svg>
+          <h3>Belum ada download</h3>
+          <p>Klik <b>Tambah URL</b>, tekan {MOD}N, atau klik kanan link di Chrome lalu pilih <b>Download dengan MacDM</b>.</p>
+        </div>
+      </section>
+
+      <section id="details" class="details hidden">
+        <div class="details-head">
+          <div class="d-title">
+            <span id="dIcon" class="file-badge"></span>
+            <div>
+              <div id="dName" class="d-name"></div>
+              <div id="dUrl" class="d-url"></div>
+            </div>
+          </div>
+          <div class="d-actions">
+            <button class="btn small" id="dOpen">Buka</button>
+            <button class="btn small" id="dFolder">Tampilkan di {FINDER}</button>
+            <button class="btn small" id="dCopy">Salin URL</button>
+          </div>
+        </div>
+        <div class="d-grid">
+          <div><label>Status</label><span id="dStatus"></span></div>
+          <div><label>Diunduh</label><span id="dDone"></span></div>
+          <div><label>Kecepatan</label><span id="dSpeed"></span></div>
+          <div><label>Koneksi aktif</label><span id="dConn"></span></div>
+          <div><label>Resume</label><span id="dResume"></span></div>
+          <div class="wide"><label>Lokasi</label><span id="dPath"></span></div>
+        </div>
+        <div class="seg-label">Peta koneksi <span id="dSegCount"></span></div>
+        <div id="segMap" class="seg-map"></div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Dialog tambah download -->
+  <dialog id="addDialog" class="dlg">
+    <form method="dialog" id="addForm">
+      <h2>Tambah Download</h2>
+      <label class="field">
+        <span>Alamat (URL)</span>
+        <div class="row">
+          <input id="addUrl" type="url" required placeholder="https://contoh.com/file.zip" autocomplete="off" />
+          <button type="button" class="btn" id="addProbe">Periksa</button>
+        </div>
+      </label>
+      <div id="addInfo" class="add-info hidden">
+        <label class="field">
+          <span>Simpan sebagai</span>
+          <input id="addName" type="text" required />
+        </label>
+        <div class="row two">
+          <label class="field">
+            <span>Kategori</span>
+            <select id="addCategory"></select>
+          </label>
+          <div class="field">
+            <span>Ukuran</span>
+            <div id="addSize" class="static"></div>
+          </div>
+        </div>
+        <label class="field">
+          <span>Folder</span>
+          <div class="row">
+            <input id="addDir" type="text" required />
+            <button type="button" class="btn" id="addChoose">Pilih…</button>
+          </div>
+        </label>
+        <div id="addResumable" class="note"></div>
+      </div>
+      <div id="addError" class="error hidden"></div>
+      <div class="dlg-actions">
+        <button type="button" class="btn" value="cancel" id="addCancel">Batal</button>
+        <div class="spacer"></div>
+        <button type="button" class="btn" id="addLater" disabled>Download Nanti</button>
+        <button type="button" class="btn primary" id="addStart" disabled>Mulai Download</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Dialog hapus -->
+  <dialog id="removeDialog" class="dlg narrow">
+    <form method="dialog">
+      <h2>Hapus download?</h2>
+      <p id="removeText" class="muted"></p>
+      <label class="check"><input type="checkbox" id="removeFile" /> Hapus juga file yang sudah diunduh</label>
+      <div class="dlg-actions">
+        <div class="spacer"></div>
+        <button class="btn" value="cancel">Batal</button>
+        <button class="btn danger" value="ok">Hapus</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Dialog pengaturan -->
+  <dialog id="settingsDialog" class="dlg">
+    <form method="dialog" id="settingsForm">
+      <h2>Pengaturan</h2>
+      <label class="field">
+        <span>Folder download utama</span>
+        <div class="row">
+          <input id="sDir" type="text" />
+          <button type="button" class="btn" id="sChoose">Pilih…</button>
+        </div>
+      </label>
+      <label class="check"><input type="checkbox" id="sCatFolders" /> Simpan per kategori (Compressed, Video, Documents, …)</label>
+      <div class="row three">
+        <label class="field"><span>Koneksi per file</span><input id="sConn" type="number" min="1" max="32" /></label>
+        <label class="field"><span>Download bersamaan</span><input id="sMax" type="number" min="1" max="10" /></label>
+        <label class="field"><span>Percobaan ulang</span><input id="sRetry" type="number" min="0" max="20" /></label>
+      </div>
+      <label class="check"><input type="checkbox" id="sDialog" /> Tampilkan dialog konfirmasi untuk link dari browser</label>
+      <label class="check"><input type="checkbox" id="sNotify" /> Notifikasi saat download selesai</label>
+      <label class="field"><span>Port ekstensi browser (perlu restart app)</span><input id="sPort" type="number" min="1024" max="65535" /></label>
+      <div class="dlg-actions">
+        <button type="button" class="btn" id="sClear">Bersihkan yang selesai</button>
+        <div class="spacer"></div>
+        <button class="btn" value="cancel">Batal</button>
+        <button class="btn primary" value="ok">Simpan</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div id="ctx" class="ctx hidden"></div>
+  <div id="toasts" class="toasts"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
